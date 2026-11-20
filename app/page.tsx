@@ -21,6 +21,8 @@ import FormTransaksi from "./FormTransaksi";
 import Logo from "./Logo";
 import TombolHapus from "./TombolHapus";
 import { hapusTrx } from "./actions";
+import { statusBudget } from "@/lib/budgets";
+import BudgetPanel from "./BudgetPanel";
 
 type Props = { searchParams: Promise<{ bulan?: string }> };
 
@@ -42,6 +44,8 @@ async function Beranda({ searchParams }: Props) {
   const daftar = daftarTransaksi(bulan);
   const perKategori = pengeluaranPerKategori(bulan);
   const dataTren = tren(bulan, 6);
+  const budget = statusBudget(bulan);
+  const kategoriPengeluaran = kategori.filter((k) => k.kind === "pengeluaran");
   const totalSaldo = dompet.reduce((jumlah, d) => jumlah + d.saldo, 0);
 
   return (
@@ -95,6 +99,14 @@ async function Beranda({ searchParams }: Props) {
           <section className={kartu}>
             <h2 className="mb-4 font-semibold">Pengeluaran per kategori</h2>
             <BarKategori data={perKategori} />
+          </section>
+          
+          <section className={kartu}>
+            <h2 className="mb-1 font-semibold">Budget bulanan</h2>
+            <p className="mb-4 text-sm text-slate-600">
+              Batas pengeluaran per kategori, berlaku setiap bulan.
+            </p>
+            <BudgetPanel data={budget} kategori={kategoriPengeluaran} />
           </section>
 
           <section>

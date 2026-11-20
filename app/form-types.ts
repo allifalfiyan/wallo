@@ -8,6 +8,14 @@ export type Isian = {
 
 export type StateForm = {
   error: string;
+  wally: string; // pesan peringatan budget, kosong kalau tidak ada
   versi: number;
   isian: Isian;
+};
+
+export type StateBudget = {
+  error: string;
+  versi: number;
+  kategori: string;
+  jumlah: string;
 };

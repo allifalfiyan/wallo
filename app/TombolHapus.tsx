@@ -1,13 +1,16 @@
 "use client";
 
-export default function TombolHapus() {
+export default function TombolHapus({
+  pesan = "Hapus transaksi ini?",
+}: {
+  pesan?: string;
+}) {
   return (
     <button
       type="submit"
       className="text-sm font-medium text-keluar hover:underline"
-      suppressHydrationWarning
       onClick={(e) => {
-        if (!confirm("Hapus transaksi ini?")) e.preventDefault();
+        if (!confirm(pesan)) e.preventDefault();
       }}
     >
       Hapus

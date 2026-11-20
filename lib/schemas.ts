@@ -36,3 +36,8 @@ export const dompetSchema = z.object({
 });
 
 export type DompetInput = z.infer<typeof dompetSchema>;
+
+export const budgetSchema = z.object({
+  categoryId: z.number().int().positive(),
+  amount: z.number().int().positive().max(BATAS_RUPIAH),
+});

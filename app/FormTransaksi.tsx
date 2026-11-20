@@ -17,6 +17,7 @@ export default function FormTransaksi({ dompet, kategori, hariIni }: Props) {
     catatTransaksi,
     {
       error: "",
+      wally: "",
       versi: 0,
       isian: {
         jumlah: "",
@@ -108,6 +109,14 @@ export default function FormTransaksi({ dompet, kategori, hariIni }: Props) {
       {state.error && (
         <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-keluar">
           {state.error}
+        </p>
+      )}
+      {state.wally && (
+        <p
+          role="status"
+          className="rounded-lg bg-gold-400/20 px-3 py-2 text-sm text-gold-700"
+        >
+          <strong>Wally:</strong> {state.wally}
         </p>
       )}
     </form>

@@ -2,11 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
+import { pesanBudget, statusBudget } from "@/lib/budgets";
 import { parseRupiah } from "@/lib/money";
+import { bulanDari } from "@/lib/tanggal";
 import {
   tambahTransaksi,
   hapusTransaksi,
   GalatInput,
+  type Transaksi,
 } from "@/lib/transactions";
 import type { StateForm } from "./form-types";
 
@@ -27,6 +30,7 @@ export async function catatTransaksi(
   };
   const gagal = (error: string): StateForm => ({
     error,
+    wally: "",
     versi: prev.versi + 1,
     isian,
   });
@@ -35,8 +39,9 @@ export async function catatTransaksi(
   if (amount === null) return gagal("Jumlah tidak valid. Contoh: 25.000");
   if (amount === 0) return gagal("Jumlah harus lebih dari 0");
 
+  let trx: Transaksi;
   try {
-    tambahTransaksi({
+    trx = tambahTransaksi({
       accountId: Number(isian.dompet),
       categoryId: Number(isian.kategori),
       kind: formData.get("kind"),
@@ -56,10 +61,21 @@ export async function catatTransaksi(
     throw e;
   }
 
+  // Transaksi sudah tersimpan. Sekarang cek budget kategori itu
+  // pada bulan transaksinya (bukan selalu bulan ini).
+  let wally = "";
+  if (trx.kind === "pengeluaran") {
+    const b = statusBudget(bulanDari(trx.date)).find(
+      (x) => x.categoryId === trx.categoryId
+    );
+    wally = (b && pesanBudget(b)) ?? "";
+  }
+
   revalidatePath("/");
   // Berhasil: kosongkan jumlah dan catatan, pertahankan dompet dan tanggal
   return {
     error: "",
+    wally,
     versi: prev.versi + 1,
     isian: { ...isian, jumlah: "", catatan: "" },
   };

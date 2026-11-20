@@ -53,6 +53,16 @@ const MIGRASI: string[] = [
   CREATE INDEX idx_transactions_account ON transactions (account_id);
   CREATE INDEX idx_transactions_category ON transactions (category_id);
   `,
+
+    // v3: budget per kategori
+  `
+  CREATE TABLE budgets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_id INTEGER NOT NULL UNIQUE REFERENCES categories(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  `,
 ];
 
 export function bukaDatabase(file: string): Database.Database {
