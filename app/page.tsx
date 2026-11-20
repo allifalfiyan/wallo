@@ -23,6 +23,8 @@ import TombolHapus from "./TombolHapus";
 import { hapusTrx } from "./actions";
 import { statusBudget } from "@/lib/budgets";
 import BudgetPanel from "./BudgetPanel";
+import { daftarSetoran, daftarTarget } from "@/lib/goals";
+import TargetPanel from "./TargetPanel";
 
 type Props = { searchParams: Promise<{ bulan?: string }> };
 
@@ -46,6 +48,10 @@ async function Beranda({ searchParams }: Props) {
   const dataTren = tren(bulan, 6);
   const budget = statusBudget(bulan);
   const kategoriPengeluaran = kategori.filter((k) => k.kind === "pengeluaran");
+  const target = daftarTarget(sekarang).map((t) => ({
+    target: t,
+    setoran: daftarSetoran(t.id),
+  }));
   const totalSaldo = dompet.reduce((jumlah, d) => jumlah + d.saldo, 0);
 
   return (
@@ -108,7 +114,16 @@ async function Beranda({ searchParams }: Props) {
             </p>
             <BudgetPanel data={budget} kategori={kategoriPengeluaran} />
           </section>
-
+          
+          <section className={kartu}>
+            <h2 className="mb-1 font-semibold">Target tabungan</h2>
+            <p className="mb-4 text-sm text-slate-600">
+              Tentukan target dan tenggat, lalu Wally menghitung berapa yang
+              perlu kamu sisihkan per bulan.
+            </p>
+            <TargetPanel data={target} hariIni={sekarang} />
+          </section>
+          
           <section>
             <h2 className="mb-3 font-semibold">Transaksi</h2>
             {daftar.length === 0 ? (

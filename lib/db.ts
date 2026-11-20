@@ -63,6 +63,29 @@ const MIGRASI: string[] = [
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
   `,
+    // v4: target tabungan
+  `
+  CREATE TABLE goals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    target INTEGER NOT NULL CHECK (target > 0),
+    start_date TEXT NOT NULL CHECK (start_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    deadline TEXT NOT NULL CHECK (deadline GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    CHECK (deadline >= start_date)
+  );
+
+  CREATE TABLE goal_deposits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    goal_id INTEGER NOT NULL REFERENCES goals(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    date TEXT NOT NULL CHECK (date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    note TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE INDEX idx_goal_deposits_goal ON goal_deposits (goal_id);
+  `,
 ];
 
 export function bukaDatabase(file: string): Database.Database {

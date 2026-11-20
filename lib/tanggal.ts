@@ -40,3 +40,10 @@ const BULAN_SINGKAT = [
 export function namaBulanSingkat(bulan: string): string {
   return BULAN_SINGKAT[Number(bulan.slice(5, 7)) - 1];
 }
+
+// Selisih bulan kalender. selisihBulan("2026-11", "2027-03") = 4
+export function selisihBulan(dari: string, ke: string): number {
+  const [t1, b1] = dari.split("-").map(Number);
+  const [t2, b2] = ke.split("-").map(Number);
+  return (t2 - t1) * 12 + (b2 - b1);
+}

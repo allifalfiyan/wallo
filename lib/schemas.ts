@@ -41,3 +41,20 @@ export const budgetSchema = z.object({
   categoryId: z.number().int().positive(),
   amount: z.number().int().positive().max(BATAS_RUPIAH),
 });
+
+export const targetSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Nama target wajib diisi")
+    .max(60, "Nama target maksimal 60 karakter"),
+  target: z.number().int().positive().max(BATAS_RUPIAH),
+  deadline: z.string().refine(tanggalValid, "Tenggat tidak valid"),
+});
+
+export const setoranSchema = z.object({
+  goalId: z.number().int().positive(),
+  amount: z.number().int().positive().max(BATAS_RUPIAH),
+  date: z.string().refine(tanggalValid, "Tanggal tidak valid"),
+  note: z.string().trim().max(200).default(""),
+});

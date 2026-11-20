@@ -5,7 +5,8 @@ import {
   bulanDari,
   geserBulan,
   namaBulan,
-  namaBulanSingkat
+  namaBulanSingkat,
+  selisihBulan
 } from "./tanggal";
 
 describe("hariIni", () => {
@@ -43,5 +44,14 @@ describe("namaBulanSingkat", () => {
     expect(namaBulanSingkat("2026-01")).toBe("Jan");
     expect(namaBulanSingkat("2026-08")).toBe("Agu");
     expect(namaBulanSingkat("2026-11")).toBe("Nov");
+  });
+});
+
+describe("selisihBulan", () => {
+  it("menghitung selisih bulan kalender, melewati tahun, dan bisa negatif", () => {
+    expect(selisihBulan("2026-11", "2026-11")).toBe(0);
+    expect(selisihBulan("2026-11", "2027-03")).toBe(4);
+    expect(selisihBulan("2026-12", "2027-01")).toBe(1);
+    expect(selisihBulan("2027-03", "2026-11")).toBe(-4);
   });
 });
