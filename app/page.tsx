@@ -123,7 +123,7 @@ async function Beranda({ searchParams }: Props) {
             </p>
             <TargetPanel data={target} hariIni={sekarang} />
           </section>
-          
+
           <section>
             <h2 className="mb-3 font-semibold">Transaksi</h2>
             {daftar.length === 0 ? (
@@ -220,9 +220,17 @@ export default function Home({ searchParams }: Props) {
       <header className="border-t-4 border-brand-600 bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Logo />
-          <span className="hidden text-sm text-slate-600 sm:inline">
-            Datamu tersimpan di komputer ini
-          </span>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/cadangan"
+              className="text-sm font-medium text-brand-700 hover:underline"
+            >
+              Cadangan
+            </Link>
+            <span className="hidden text-sm text-slate-600 sm:inline">
+              Datamu tersimpan di komputer ini
+            </span>
+          </div>
         </div>
       </header>
       <Suspense fallback={<p className="p-8">Memuat...</p>}>

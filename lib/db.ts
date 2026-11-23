@@ -1,6 +1,8 @@
 import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
+import { cadanganHarian } from "./backup";
+import { hariIni } from "./tanggal";
 
 // Daftar migrasi: urutan = versi skema. Jangan ubah yang sudah ada,
 // tambahkan entri baru di bawahnya saat skema perlu berubah.
@@ -88,6 +90,8 @@ const MIGRASI: string[] = [
   `,
 ];
 
+export const VERSI_SKEMA = MIGRASI.length;
+
 export function bukaDatabase(file: string): Database.Database {
   if (file !== ":memory:") {
     fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -108,14 +112,33 @@ export function bukaDatabase(file: string): Database.Database {
   return db;
 }
 
+export function lokasiDb(): string {
+  return (
+    process.env.WALLO_DB_PATH ?? path.join(process.cwd(), "data", "wallo.db")
+  );
+}
+
+export function folderBackup(): string {
+  return path.join(path.dirname(lokasiDb()), "backups");
+}
+
 // Satu koneksi saja, walau file ini dimuat ulang saat development
 const globalForDb = globalThis as unknown as { wallo?: Database.Database };
 
 export function getDb(): Database.Database {
   if (!globalForDb.wallo) {
-    globalForDb.wallo = bukaDatabase(
-      process.env.WALLO_DB_PATH ?? path.join(process.cwd(), "data", "wallo.db")
-    );
+    const db = bukaDatabase(lokasiDb());
+    globalForDb.wallo = db;
+    // Cadangan harian berjalan di latar belakang. Kegagalannya tidak
+    // boleh mengganggu aplikasi, jadi galatnya sengaja diabaikan.
+    cadanganHarian(db, folderBackup(), hariIni()).catch(() => {});
   }
   return globalForDb.wallo;
+}
+
+// Dipakai saat pemulihan: menutup koneksi supaya file bisa diganti.
+// getDb() akan membukanya kembali secara otomatis.
+export function tutupDb(): void {
+  globalForDb.wallo?.close();
+  globalForDb.wallo = undefined;
 }
